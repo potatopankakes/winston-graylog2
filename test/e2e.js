@@ -133,6 +133,22 @@ socket.on('listening', () => {
         listeners.push(cb);
         logger.debug(null, extra);
       });
+      it('should log error', (done) => {
+        const extra = {
+          id: Math.random(),
+          error: new Error('the error'),
+        };
+        const cb = (msg) => {
+          if (msg.__id === extra.id) {
+            assert(msg._error);
+            assert.deepEqual(msg._error, extra.error);
+            listeners.splice(listeners.find(cb), 1);
+            done();
+          }
+        };
+        listeners.push(cb);
+        logger.debug(null, extra);
+      });
     });
     after(() => socket.close(done));
   });
